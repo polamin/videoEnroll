@@ -13,14 +13,16 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    my_qlabel.cpp
 
 HEADERS  += mainwindow.h \
-    video_reader.h
+    video_reader.h \
+    my_qlabel.h
 
 FORMS    += mainwindow.ui
 
-INCLUDEPATH += /usr/local/include/
+INCLUDEPATH += /usr/local/include/opencv2
 LIBS += -L/usr/local/lib
 LIBS += -lopencv_core
 LIBS += -lopencv_imgproc
