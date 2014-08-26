@@ -1,0 +1,61 @@
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include <vector>
+#include "video_reader.h"
+
+
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    VideoReader video(video_path);
+    int frameCount = 0;
+    while (1) {
+        cv::Mat frame2 = video.get_current_frame();
+        if (frame2.empty())
+        {
+            break;
+        }
+        frameCount++;
+        cv::Size size(640,480);
+        cv::resize(frame2,frame,size);
+        //Start run tracker for each box
+        for (int index = 0 ; index < ts.size() ; index++)
+        {
+            if (ts[index].firstTime)
+            {
+                ts[index].mosTracker = MOSSETracker(frame,ts[index].bbox);
+                ts[index].firstTime = false;
+                //Update Value
+                ts[index].bbox = ts[index].mosTracker.GetBBox();
+
+            }
+            else
+            {
+                ts[index].mosTracker.Update(frame);
+                //Update Value
+                ts[index].bbox = ts[index].mosTracker.GetBBox();
+                ts[index].PSR_ = ts[index].mosTracker.get_PSR();
+                // terminate out box
+                if(ts[index].PSR_offset == 0)
+                    ts[index].PSR_offset = ts[index].PSR_;
+                else if (ts[index].PSR_offset < 10 && ts[index].PSR_ < 10 )
+                    continue;
+                    //ts.erase(ts.begin() + index);
+                else
+                    ts[index].PSR_offset = ts[index].PSR_;
+            }
+
+        }
+            }
+}
