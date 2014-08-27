@@ -14,7 +14,8 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    my_qlabel.cpp
+    my_qlabel.cpp \
+    video_reader.cpp
 
 HEADERS  += mainwindow.h \
     video_reader.h \
