@@ -15,6 +15,9 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    std::string video_path;
+    int frame_count;
+    bool stop_all;
 
 private slots:
     void Mouse_current_pos();
@@ -23,6 +26,11 @@ private slots:
     void Mouse_Released();
     void on_pushButton_clicked();
     void on_btPlay_clicked();
+    void delay(int millisecondsToWait);
+
+    void on_horizontalScrollBar_sliderReleased();
+    void on_horizontalScrollBar_sliderPressed();
+    void stopProcess();
 
 private:
     Ui::MainWindow *ui;
