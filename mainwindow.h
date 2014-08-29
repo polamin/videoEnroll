@@ -18,6 +18,12 @@ public:
     std::string video_path;
     int frame_count;
     bool stop_all;
+    bool clicked = false;
+    int originX;
+    int originY;
+    int finalX;
+    int finalY;
+    QPixmap imgInLabel;
 
 private slots:
     void Mouse_current_pos();
@@ -31,6 +37,8 @@ private slots:
     void on_horizontalScrollBar_sliderReleased();
     void on_horizontalScrollBar_sliderPressed();
     void stopProcess();
+    void DrawRec();
+
 
 private:
     Ui::MainWindow *ui;

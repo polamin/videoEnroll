@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <opencv2/opencv.hpp>
 #include <QTime>
+#include <QPainter>
+#include <QRubberBand>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -66,7 +68,7 @@ void MainWindow::on_btPlay_clicked()
 
         cv::resize(frame2,frame,size);
         cv::cvtColor(frame,frame,CV_BGR2RGB);
-        QPixmap  imgInLabel = QPixmap::fromImage(QImage((unsigned char*) frame.data,
+        imgInLabel = QPixmap::fromImage(QImage((unsigned char*) frame.data,
                                                         frame.cols,
                                                         frame.rows,
                                                         QImage::Format_RGB888));
@@ -84,21 +86,77 @@ void MainWindow::on_btPlay_clicked()
 
 void MainWindow::Mouse_Released()
 {
+    //DrawRec();
+        clicked = false;
+
+        int startX;
+        int startY;
+        //Find XY
+        if(finalX < originX && finalY < originY)
+        {
+        startX = finalX;
+        startY = finalY;
+        }
+        else if (finalX < originX && finalY > originY)
+        {
+        startX = finalX;
+        startY = originY;
+        }
+        else if (finalX > originX && finalY < originY)
+        {
+        startX = originX;
+        startY = finalY;
+        }
+        else if (finalX > originX && finalY > originY)
+        {
+        startX = originX;
+        startY = originY;
+        }
+
+        int width = abs(finalX-originX);
+        int height =  abs(finalY-originY);
 }
 
 void MainWindow::Mouse_current_pos()
 {
 
-    //finalX = ui->lblMouse->x;
-    //finalY = ui->lblMouse->y;
+    if(clicked)
+       {
+           DrawRec();
+           finalX = ui->lbVideo1->x;
+           finalY = ui->lbVideo1->y;
+       }
 
 }
 
 
 void MainWindow::Mouse_Pressed()
 {
-    //qDebug("abc");
+    //ui->lblMouse_Current_Event->setText("Mouse Presseds!");
+    originX = ui->lbVideo1->x;
+    originY = ui->lbVideo1->y;
 
+    clicked = true;
+
+}
+
+void MainWindow::DrawRec()
+{
+    QPixmap pixmap = imgInLabel;
+    QPainter painter(&pixmap);
+    QPen Red((QColor(255,0,0)),5);
+    painter.setPen(Red);
+
+    painter.drawLine(originX,originY,ui->lbVideo1->x,originY); //right
+    painter.drawLine(ui->lbVideo1->x,originY,ui->lbVideo1->x,ui->lbVideo1->y); //down
+    painter.drawLine(ui->lbVideo1->x,ui->lbVideo1->y,originX,ui->lbVideo1->y); //left
+    painter.drawLine(originX,ui->lbVideo1->y,originX,originY); //up
+
+    ui->lbVideo1->setPixmap(pixmap);
+    ui->lbVideo1->show();
+
+    if (!clicked)
+        imgInLabel = pixmap;
 }
 
 void MainWindow::Mouse_left()
