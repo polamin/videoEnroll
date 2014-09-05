@@ -15,11 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     my_qlabel.cpp \
-    video_reader.cpp
+    video_reader.cpp \
+    video_data.cpp
 
 HEADERS  += mainwindow.h \
     video_reader.h \
-    my_qlabel.h
+    my_qlabel.h \
+    video_data.h
 
 FORMS    += mainwindow.ui
 
