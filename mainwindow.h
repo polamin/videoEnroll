@@ -39,24 +39,18 @@ private:
     vector<VideoReader> videoes_reader;
 
 private slots:
-    void Mouse_current_pos(QString);
-    void Mouse_Pressed(QString);
+    void Mouse_current_pos(QString,int,int);
+    void Mouse_Pressed(int,int);
     void Mouse_left(QString);
     void Mouse_Released(QString);
-    void on_pushButton_clicked();
     void on_btPlay_clicked();
     void delay(int millisecondsToWait);
-
     void on_horizontalScrollBar_sliderReleased();
     void on_horizontalScrollBar_sliderPressed();
     void stopProcess();
-    void DrawRec(QString);
-    void update_Person(int startX,int startY,int width,int height);
-
-
+    void DrawRec(QString,int,int);
+    void update_Person(QString,int,int,int,int);
     void on_btPause_clicked();
-
-
     void on_btReidentificate_clicked();
 };
 

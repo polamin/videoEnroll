@@ -30,54 +30,6 @@
      <string>Play</string>
     </property>
    </widget>
-   <widget class="my_qlabel" name="lbVideo1">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>640</width>
-      <height>480</height>
-     </rect>
-    </property>
-    <property name="mouseTracking">
-     <bool>true</bool>
-    </property>
-    <property name="text">
-     <string>Video1</string>
-    </property>
-   </widget>
-   <widget class="my_qlabel" name="lbVideo3">
-    <property name="geometry">
-     <rect>
-      <x>1330</x>
-      <y>0</y>
-      <width>640</width>
-      <height>480</height>
-     </rect>
-    </property>
-    <property name="mouseTracking">
-     <bool>true</bool>
-    </property>
-    <property name="text">
-     <string>Video3</string>
-    </property>
-   </widget>
-   <widget class="my_qlabel" name="lbVideo2">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>0</y>
-      <width>640</width>
-      <height>480</height>
-     </rect>
-    </property>
-    <property name="mouseTracking">
-     <bool>true</bool>
-    </property>
-    <property name="text">
-     <string>Video2</string>
-    </property>
-   </widget>
    <widget class="QScrollBar" name="horizontalScrollBar">
     <property name="geometry">
      <rect>
@@ -158,8 +110,8 @@
      <rect>
       <x>990</x>
       <y>560</y>
-      <width>221</width>
-      <height>281</height>
+      <width>64</width>
+      <height>128</height>
      </rect>
     </property>
     <property name="text">
@@ -169,14 +121,62 @@
    <widget class="QLabel" name="lbPerson2">
     <property name="geometry">
      <rect>
-      <x>1270</x>
+      <x>1070</x>
       <y>560</y>
-      <width>221</width>
-      <height>281</height>
+      <width>64</width>
+      <height>128</height>
      </rect>
     </property>
     <property name="text">
      <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="my_qlabel" name="lbVideo1">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>0</y>
+      <width>640</width>
+      <height>480</height>
+     </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Video1</string>
+    </property>
+   </widget>
+   <widget class="my_qlabel" name="lbVideo2">
+    <property name="geometry">
+     <rect>
+      <x>680</x>
+      <y>0</y>
+      <width>640</width>
+      <height>480</height>
+     </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Video2</string>
+    </property>
+   </widget>
+   <widget class="my_qlabel" name="lbVideo3">
+    <property name="geometry">
+     <rect>
+      <x>1340</x>
+      <y>0</y>
+      <width>640</width>
+      <height>480</height>
+     </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Video3</string>
     </property>
    </widget>
   </widget>

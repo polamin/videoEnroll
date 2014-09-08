@@ -16,12 +16,11 @@ public:
     void mousePressEvent(QMouseEvent *ev);
     void leaveEvent(QEvent *);
     void mouseReleaseEvent(QMouseEvent *ev);
-
     int x,y;
 
 signals:
-    void Mouse_Pressed(QString);
-    void Mouse_Pos(QString);
+    void Mouse_Pressed(int,int);
+    void Mouse_Pos(QString,int,int);
     void Mouse_Left(QString);
     void Mouse_Released(QString);
 

@@ -17,9 +17,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    videoes_data.push_back(video_data("/media/polamin/ad73bd2e-e1ca-4fd1-a5b3-08b598c6e14b/IDMI/dry.run.20140806.1/ICube_l1_Cam03_sync.mkv"));
     videoes_data.push_back(video_data("/media/polamin/ad73bd2e-e1ca-4fd1-a5b3-08b598c6e14b/IDMI/dry.run.20140806.1/ICube_l1_Cam04_sync.mkv"));
     videoes_data.push_back(video_data("/media/polamin/ad73bd2e-e1ca-4fd1-a5b3-08b598c6e14b/IDMI/dry.run.20140806.1/ICube_l1_Cam05_sync.mkv"));
-    videoes_data.push_back(video_data("/media/polamin/ad73bd2e-e1ca-4fd1-a5b3-08b598c6e14b/IDMI/dry.run.20140806.1/ICube_l1_Cam06_sync.mkv"));
 
     object_name_filter = "lbVideo";
 
@@ -28,11 +28,13 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         if(label->objectName().indexOf(object_name_filter) == -1)
             continue;
-        connect(label,SIGNAL(Mouse_Pos(QString)),this,SLOT(Mouse_current_pos(QString)));
-        connect(label,SIGNAL(Mouse_Pressed(QString)),this,SLOT(Mouse_Pressed(QString)));
+        connect(label,SIGNAL(Mouse_Pos(QString,int,int)),this,SLOT(Mouse_current_pos(QString,int,int)));
+        connect(label,SIGNAL(Mouse_Pressed(int,int)),this,SLOT(Mouse_Pressed(int,int)));
         connect(label,SIGNAL(Mouse_Left(QString)),this,SLOT(Mouse_left(QString)));
         connect(label,SIGNAL(Mouse_Released(QString)),this,SLOT(Mouse_Released(QString)));
         videoes_data[videoes_count].object_name = object_name_filter + QString::number(videoes_count+1);
+        QString qstr(videoes_data[videoes_count].get_video_path().c_str());
+        qDebug() << qstr <<" "<<label->objectName();
         videoes_count++;
     }
 
@@ -49,17 +51,14 @@ void MainWindow::on_btPlay_clicked()
 
 
     int vec_size = videoes_data.size();//vec_size keep how many video we use
+
     for (int i = 0 ; i < vec_size ; i++)
     {
         videoes_reader.push_back(videoes_data[i].get_video_path());
     }
 
     frame_count = 0;
-
     cv::Size size(640,480);
-
-    qDebug() << videoes_reader[0].get_video_length();
-
     ui->horizontalScrollBar->setMaximum(videoes_reader[0].get_video_length());
 
 
@@ -85,7 +84,7 @@ void MainWindow::on_btPlay_clicked()
         {
             cv::resize(videoes_data[i].frame,frame[i],size);
             cv::cvtColor(frame[i],frame[i],CV_BGR2RGB);
-            videoes_data[i].imgInLabel = QPixmap::fromImage(QImage((unsigned char*) frame[i].data,
+            videoes_data[i].img_in_label = QPixmap::fromImage(QImage((unsigned char*) frame[i].data,
                                                             frame[i].cols,
                                                             frame[i].rows,
                                                             QImage::Format_RGB888));
@@ -97,7 +96,7 @@ void MainWindow::on_btPlay_clicked()
         {
             if(label->objectName().indexOf(object_name_filter) == -1)
                 continue;
-            label->setPixmap(videoes_data[i].imgInLabel);
+            label->setPixmap(videoes_data[i].img_in_label);
             label->show();
 
             i++;
@@ -140,15 +139,29 @@ void MainWindow::Mouse_Released(QString name)
 
         int width = abs(finalX-originX);
         int height =  abs(finalY-originY);
-        update_Person(startX,startY,width,height);
+        update_Person(name,startX,startY,width,height);
 }
 
 
-void MainWindow::update_Person(int startX,int startY,int width,int height)
+void MainWindow::update_Person(QString name,int startX,int startY,int width,int height)
 {
-    QPixmap pixmap = videoes_data[0].imgInLabel;
+    int videoes_data_index;
+    int vec_size = videoes_data.size();//vec_size keep how many video we use
+    for (int i = 0 ; i < vec_size ; i++)
+    {
+        if(videoes_data[i].object_name == name)
+        {
+            videoes_data_index = i;
+            break;
+        }
+    }
+
+    QPixmap pixmap = videoes_data[videoes_data_index].img_in_label;
 
     QPixmap person = pixmap.copy(startX,startY,width,height);
+
+    person = person.scaled(64,128);
+
 
     if(!person1_label_set)
     {
@@ -162,6 +175,7 @@ void MainWindow::update_Person(int startX,int startY,int width,int height)
         person2 = person;
         ui->lbPerson2->setPixmap(person);
         ui->lbPerson2->show();
+        person1_label_set = false;
     }
 
 }
@@ -176,56 +190,63 @@ void MainWindow::on_btReidentificate_clicked()
     person1.save(&file, "PNG");
     person2.save(&file2, "PNG");
 
-    QString exec_path = "/media/polamin/ad73bd2e-e1ca-4fd1-a5b3-08b598c6e14b/FYPREINDENTIFICATION/MatlabCode/sdalf/run_L_main_tagging_SvsS.sh ";
-    QString matlab_path = "/usr/local/MATLAB/R2013a/ ";
-    QProcess::execute (exec_path + matlab_path + img_path + " " + img_path2);
+//    QString exec_path = "/media/polamin/ad73bd2e-e1ca-4fd1-a5b3-08b598c6e14b/FYPREINDENTIFICATION/MatlabCode/sdalf/run_L_main_tagging_SvsS.sh ";
+//    QString matlab_path = "/usr/local/MATLAB/R2013a/ ";
+//    QProcess::execute (exec_path + matlab_path + img_path + " " + img_path2);
 }
 
 
-void MainWindow::Mouse_current_pos(QString name)
+void MainWindow::Mouse_current_pos(QString name,int x,int y)
 {
-//    QLabel *label = findChild<QLabel*>(name);
+    //QLabel *label = findChild<QLabel*>(name);
     if(clicked)
     {
-
-        DrawRec(name);
-        finalX = ui->lbVideo1->x;
-        finalY = ui->lbVideo1->y;
-
+        DrawRec(name,x,y);
+        finalX = x;
+        finalY = y;
     }
+
 }
 
-
-
-void MainWindow::Mouse_Pressed(QString name)
+void MainWindow::Mouse_Pressed(int x,int y)
 {
     //ui->lblMouse_Current_Event->setText("Mouse Presseds!");
-    originX = ui->lbVideo1->x;
-    originY = ui->lbVideo1->y;
+    originX = x;
+    originY = y;
 
-       clicked = true;
+    clicked = true;
 }
 
-void MainWindow::DrawRec(QString name)
+void MainWindow::DrawRec(QString name,int x,int y)
 {
     QLabel *label = findChild<QLabel*>(name);
 
+    int videoes_data_index;
+    int vec_size = videoes_data.size();//vec_size keep how many video we use
+    for (int i = 0 ; i < vec_size ; i++)
+    {
+        if(videoes_data[i].object_name == name)
+        {
+            videoes_data_index = i;
+            break;
+        }
+    }
 
-    QPixmap pixmap = videoes_data[0].imgInLabel;
+    QPixmap pixmap = videoes_data[videoes_data_index].img_in_label;
     QPainter painter(&pixmap);
     QPen Red((QColor(255,0,0)),5);
     painter.setPen(Red);
 
-    painter.drawLine(originX,originY,ui->lbVideo1->x,originY); //right
-    painter.drawLine(ui->lbVideo1->x,originY,ui->lbVideo1->x,ui->lbVideo1->y); //down
-    painter.drawLine(ui->lbVideo1->x,ui->lbVideo1->y,originX,ui->lbVideo1->y); //left
-    painter.drawLine(originX,ui->lbVideo1->y,originX,originY); //up
+    painter.drawLine(originX,originY,x,originY); //right
+    painter.drawLine(x,originY,x,y); //down
+    painter.drawLine(x,y,originX,y); //left
+    painter.drawLine(originX,y,originX,originY); //up
 
     label->setPixmap(pixmap);
     label->show();
 
     if (!clicked)
-        videoes_data[0].imgInLabel = pixmap;
+        videoes_data[videoes_data_index].img_in_label = pixmap;
 }
 
 void MainWindow::Mouse_left(QString name)

@@ -10,10 +10,8 @@ public:
     std::string get_video_path();
 
     QString object_name; //What is name of label
-    QPixmap imgInLabel;
+    QPixmap img_in_label;
     cv::Mat frame;
-    int last_x = 0;
-    int last_y = 0;
 
 private:
     std::string video_path;
